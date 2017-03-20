@@ -1,19 +1,22 @@
 ﻿<#
 
 .SYNOPSIS
-    Returns the details of a single compliance profile for a nominated owner.
+    Downloads the nominated compliance profile as a tarball.
 
 .DESCRIPTION
-    Returns the details of a single compliance profile for a nominated owner from the Chef Automate compliance store.
+    Downloads the nominated compliance profile as a tarball from the Chef Automate compliance store and saves it to a specific path or the current path.
 
 .EXAMPLE
-    C:\PS> Get-ChefAutomateComplianceProfiles -automateServer 'chef-automate.company.com' -automateOrgName OrgName -automateUser admin -automateUserToken <USER-TOKEN> -complianceName 'ssh'
+    C:\PS> Save-ChefAutomateComplianceProfiles -automateServer 'chef-automate.company.com' -automateOrgName OrgName -automateUser admin -automateUserToken <USER-TOKEN> -complianceName 'ssh'
+
+.EXAMPLE
+    C:\PS> Save-ChefAutomateComplianceProfiles -automateServer 'chef-automate.company.com' -automateOrgName OrgName -automateUser admin -automateUserToken <USER-TOKEN> -complianceName 'ssh' -profilePath 'C:\Temp'
 
 .INPUTS
-    Takes the DNS-resolvable name of the Chef Automate server (e.g. 'chef-automate' or 'chef-automate.company.com'), the Chef Automate Enterprise name (e.g. OrgName), the Chef Automate user who 'owns' the compliance profiles, the user token for authentication (https://YOUR_AUTOMATE_HOST/e/YOUR_AUTOMATE_ENTERPRISE/#/dashboard?token) and the Compliance profile name (e.g. 'ssh')
+    Takes the DNS-resolvable name of the Chef Automate server (e.g. 'chef-automate' or 'chef-automate.company.com'), the Chef Automate Enterprise name (e.g. OrgName), the Chef Automate user who 'owns' the compliance profiles, the user token for authentication (https://YOUR_AUTOMATE_HOST/e/YOUR_AUTOMATE_ENTERPRISE/#/dashboard?token), the Compliance profile name (e.g. 'ssh') and the local path to which to save the tarball.
 
 .OUTPUTS
-    PowerShell object containing the nominated compliance profile stored on the Chef Automate server owned by the nominated user.
+    Tarball containing the specified compliance profile.
 
 #>
 
@@ -71,6 +74,9 @@ function Save-ChefAutomateComplianceProfile
         $headers.Add("chef-delivery-user", $automateUser)
         $headers.Add("chef-delivery-token", $automateUserToken)
         $fileName = $complianceName +'-' + (Get-Date -Format yyyyMMddHHMMss) + '.tar.gz'
+
+        if($profilePath -eq $null){$profilePath = (Get-Item -Path ".\" -Verbose).FullName}
+
         $localProfile = $profilePath + '\' + $fileName
         Invoke-RestMethod -Method Get -Uri $profileURL -Headers $headers -OutFile $localProfile
     }
