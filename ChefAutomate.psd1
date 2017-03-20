@@ -15,7 +15,7 @@
     ModuleVersion = '0.1.7'
 
     # ID used to uniquely identify this module
-    GUID = ''
+    GUID = 'aa42b5d5-8be2-4bf5-a43b-a8156154d56d'
 
     # Author of this module
     Author = 'James Bannan <james@bannan.com.au>'
